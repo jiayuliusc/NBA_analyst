@@ -1,0 +1,7 @@
+{"question": "How did LeBron James play in his last game?", "relevant_chunk_ids": ["d0a9292ddead3ffc"], "category": "player stats", "note": "Requires player + recency metadata, not just semantic similarity."}
+{"question": "What were LeBron James's season averages?", "relevant_chunk_ids": ["bf2d9c4058466711"], "category": "season averages", "note": "The answer lives in a season-summary evidence unit."}
+{"question": "How did the Cavaliers perform last night?", "relevant_chunk_ids": ["a5ca2d5509842a13"], "category": "team performance", "note": "Generic wording needs latest-date interpretation and team-game chunks."}
+{"question": "What happened in the latest matchup?", "relevant_chunk_ids": ["19932bf153712fce"], "category": "recent games", "note": "No player name appears, so flat player-row search usually drifts."}
+{"question": "Show me player stats from AJ Green against the Kings on 2026-01-04.", "relevant_chunk_ids": ["6a214bb16f5d084b"], "category": "player stats", "note": "Exact player/date/opponent metadata should put the right row near the top."}
+{"question": "Who led the Cavaliers game on 2026-01-04?", "relevant_chunk_ids": ["a5ca2d5509842a13", "19932bf153712fce"], "category": "team performance", "note": "Team-game and game-level chunks are both useful evidence."}
+{"question": "Give me the Cavaliers versus Kings matchup history from the recent game.", "relevant_chunk_ids": ["19932bf153712fce", "a5ca2d5509842a13"], "category": "matchup history", "note": "Matchup intent should favor game-level and team-game evidence."}

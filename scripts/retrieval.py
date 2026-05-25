@@ -1,5 +1,11 @@
-import psycopg2
 import ollama
+
+from .improved_retrieval import RetrievalConfig, retrieve_evidence
+
+try:
+    import psycopg2
+except Exception:
+    psycopg2 = None
 
 DB_CONFIG = {
     "dbname": "postgres",
@@ -10,6 +16,15 @@ DB_CONFIG = {
 }
 
 def retrieve_info(user_question):
+    if psycopg2 is None:
+        results = retrieve_evidence(
+            user_question,
+            k=50,
+            config=RetrievalConfig(metadata=False, dense=True, keyword=False, rerank=False),
+            use_db=False,
+        )
+        return [result.text for result in results]
+
     # Convert user_question into a vector
     response = ollama.embeddings(model='nomic-embed-text', prompt=f"{user_question}")
     query_vector = response['embedding']
@@ -34,6 +49,16 @@ def retrieve_info(user_question):
 
     # Return the summaries as a single string for the LLM
     return [row[0] for row in results]
+
+
+def retrieve_info_v2(user_question, k=10):
+    results = retrieve_evidence(
+        user_question,
+        k=k,
+        config=RetrievalConfig(metadata=True, dense=True, keyword=True, rerank=True),
+        use_db=True,
+    )
+    return [result.text for result in results]
 
 # --- Test It ---
 if __name__ == "__main__":

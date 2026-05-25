@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 from mlx_lm import load, generate
-from .retrieval import retrieve_info
+from .retrieval import retrieve_info_v2
 
 _MODEL = None
 _TOKENIZER = None
@@ -51,7 +51,7 @@ def _get_model():
 
 def generate_answer(user_question):
     model, tokenizer = _get_model()
-    retrieved_docs = retrieve_info(user_question)
+    retrieved_docs = retrieve_info_v2(user_question, k=10)
     context_block = "\n".join(retrieved_docs)
 
     # Use the format you trained on

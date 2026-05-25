@@ -1,6 +1,6 @@
 import ollama
 import re
-from .retrieval import retrieve_info
+from .retrieval import retrieve_info_v2
 
 def clean_deepseek_output(text):
     # Remove the <think>...</think> blocks to show only the final answer
@@ -8,7 +8,7 @@ def clean_deepseek_output(text):
 
 def generate_answer(user_question):
     # Retrieve Context
-    retrieved_docs = retrieve_info(user_question)
+    retrieved_docs = retrieve_info_v2(user_question, k=10)
     
     if not retrieved_docs:
         return "I couldn't find any specific game logs matching your question."
