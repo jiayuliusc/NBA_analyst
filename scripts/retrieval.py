@@ -51,7 +51,7 @@ def retrieve_info(user_question):
     return [row[0] for row in results]
 
 
-def retrieve_info_v2(user_question, k=10):
+def retrieve_info_v2(user_question, k=5):
     results = retrieve_evidence(
         user_question,
         k=k,

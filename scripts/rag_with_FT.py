@@ -51,7 +51,7 @@ def _get_model():
 
 def generate_answer(user_question):
     model, tokenizer = _get_model()
-    retrieved_docs = retrieve_info_v2(user_question, k=10)
+    retrieved_docs = retrieve_info_v2(user_question, k=5)
     context_block = "\n".join(retrieved_docs)
 
     # Use the format you trained on

@@ -8,7 +8,7 @@ def clean_deepseek_output(text):
 
 def generate_answer(user_question):
     # Retrieve Context
-    retrieved_docs = retrieve_info_v2(user_question, k=10)
+    retrieved_docs = retrieve_info_v2(user_question, k=5)
     
     if not retrieved_docs:
         return "I couldn't find any specific game logs matching your question."

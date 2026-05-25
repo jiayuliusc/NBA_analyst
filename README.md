@@ -25,15 +25,15 @@ python3 -m scripts.evaluate_retrieval --write-eval
 
 Latest local report: `reports/retrieval_ablation_report.md`
 
-| system | recall@5 | recall@10 | MRR | nDCG@10 |
-|:--|--:|--:|--:|--:|
-| current baseline | 0.286 | 0.286 | 0.286 | 0.286 |
-| baseline + metadata filtering | 0.429 | 0.429 | 0.429 | 0.429 |
-| baseline + hybrid retrieval | 0.429 | 0.429 | 0.429 | 0.429 |
-| baseline + reranker | 0.357 | 0.357 | 0.357 | 0.341 |
-| full system | 0.786 | 0.786 | 0.857 | 0.784 |
+| system | recall@3 | recall@5 | recall@10 | MRR | nDCG@10 |
+|:--|--:|--:|--:|--:|--:|
+| current baseline | 0.367 | 0.367 | 0.383 | 0.358 | 0.364 |
+| baseline + metadata filtering | 0.517 | 0.517 | 0.533 | 0.508 | 0.514 |
+| baseline + hybrid retrieval | 0.517 | 0.517 | 0.533 | 0.508 | 0.514 |
+| baseline + reranker | 0.367 | 0.367 | 0.383 | 0.342 | 0.352 |
+| full system | 0.833 | 0.833 | 0.867 | 0.892 | 0.854 |
 
-The ablation report makes the main effect clear: metadata-aware candidate control and intent reranking produce the material recall improvement over flat top-k search.
+The labeled set now contains 60 generated-but-deterministic queries. The ablation report makes the main effect clear: metadata-aware candidate control and intent reranking produce the material recall improvement over flat top-k search. The context-budget check shows recall@3 and recall@5 are identical overall, so answer generation now passes the top 5 chunks by default while the demo still shows 10 for inspection.
 
 ## Demo UI
 

@@ -194,21 +194,48 @@ def retrieve_evidence(
     df = load_chunks()
     pool = _soft_metadata_pool(df, intent) if config.metadata else df
     candidate_idx = list(pool.index)
-    keyword_scores = _keyword_scores(query, candidate_idx) if config.keyword else {}
-    dense_scores = _heuristic_dense_scores(query, candidate_idx) if config.dense else {}
+    if config.keyword or config.dense:
+        shared_scores = _keyword_scores(query, candidate_idx)
+    else:
+        shared_scores = {}
+    keyword_scores = shared_scores if config.keyword else {}
+    dense_scores = shared_scores if config.dense else {}
+
+    if not config.metadata:
+        base_scored = []
+        for idx in candidate_idx:
+            dense_score = dense_scores.get(idx, 0.0)
+            keyword_score = keyword_scores.get(idx, 0.0)
+            score = (0.65 * dense_score) + (0.35 * keyword_score)
+            base_scored.append((score, idx, {"dense": dense_score, "keyword": keyword_score, "intent": intent.intent}))
+        base_scored.sort(key=lambda item: item[0], reverse=True)
+        candidate_count = config.candidate_limit if config.rerank else k
+        candidate_idx = [idx for _, idx, _ in base_scored[:candidate_count]]
+        base_debug = {idx: (score, debug) for score, idx, debug in base_scored[:candidate_count]}
+    else:
+        base_debug = {}
 
     scored: list[tuple[float, int, dict]] = []
     for idx in candidate_idx:
         row = df.loc[idx]
-        dense_score = dense_scores.get(idx, 0.0)
-        keyword_score = keyword_scores.get(idx, 0.0)
-        score = (0.65 * dense_score) + (0.35 * keyword_score)
+        if idx in base_debug:
+            score, debug = base_debug[idx]
+            dense_score = debug["dense"]
+            keyword_score = debug["keyword"]
+        else:
+            dense_score = dense_scores.get(idx, 0.0)
+            keyword_score = keyword_scores.get(idx, 0.0)
+            score = (0.65 * dense_score) + (0.35 * keyword_score)
+            debug = {"dense": dense_score, "keyword": keyword_score, "intent": intent.intent}
         if config.metadata:
             score += _metadata_boost(row, intent)
         if config.rerank:
             score += _rerank_boost(row, intent, query)
-        scored.append((score, idx, {"dense": dense_score, "keyword": keyword_score, "intent": intent.intent}))
+        scored.append((score, idx, debug))
 
+    if len(scored) > config.candidate_limit and config.rerank:
+        scored.sort(key=lambda item: item[0], reverse=True)
+        scored = scored[: config.candidate_limit]
     scored.sort(key=lambda item: item[0], reverse=True)
     results: list[EvidenceResult] = []
     for score, idx, debug in scored[:k]:
